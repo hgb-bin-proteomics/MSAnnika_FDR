@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+
+# MS ANNIKA FDR VALIDATOR
+# 2024 (c) Micha Johannes Birklbauer
+# https://github.com/michabirklbauer/
+# micha.birklbauer@gmail.com
+
+# version tracking
+__version = "1.0.0"
+__date = "2024-01-09"
+
+# REQUIREMENTS
+# pip install pandas
+# pip install openpyxl
+
+######################
+
+# import packages
+import argparse
+import pandas as pd
+
+class MSAnnika_CSM_Grouper:
+
+    @staticmethod
+    def get_crosslink_key(row: pd.Series) -> str:
+        a = str(row["Sequence A"]) + str(row["Crosslinker Position A"])
+        b = str(row["Sequence B"]) + str(row["Crosslinker Position B"])
+        return "-".join(sorted([a, b]))
+
+    @staticmethod
+    def get_nr_proteins(row: pd.Series) -> int:
+        proteins_str = row["Accession A"].strip(";") + ";" + row["Accession B"].strip(";")
+        return len(proteins_str.split(";"))
+
+    @staticmethod
+    def get_best_csm_score(csms: List[pd.Series]) -> float:
+
+        best_score = 0
+
+        for csm in csms:
+            if csm["Combined Score"] > best_score:
+                best_score = csm["Combined Score"]
+
+        return best_score
+
+    @staticmethod
+    def get_decoy_flag(row: pd.Series) -> bool:
+        return True if "D" in row["Alpha T/D"] or "D" in row["Beta T/D"] else False
+
+    @staticmethod
+    def group(data: pd.DataFrame) -> pd.DataFrame:
+
+        crosslinks = dict()
+
+        for i, row in data.iterrows():
+            crosslink = get_crosslink_key(row)
+            if crosslink in crosslinks:
+                crosslinks[crosslink].append(row)
+            else:
+                crosslinks[crosslink] = [row]
+
+        rows = list()
+        columns = ["CHECKED",
+                   "Crosslinker",
+                   "Crosslink Type",
+                   "# CSMs",
+                   "# Proteins",
+                   "Sequence A",
+                   "Accession A",
+                   "Position A",
+                   "Sequence B",
+                   "Accession B",
+                   "Position B",
+                   "Protein Descriptions A",
+                   "Protein Descriptions B",
+                   "Best CSM Score",
+                   "In protein A",
+                   "In protein B",
+                   "Decoy",
+                   "Modifications A",
+                   "Modifications B",
+                   "Confidence"]
+
+        for crosslink in crosslinks:
+            row = pd.Series({"CHECKED": False,
+                             "Crosslinker": crosslinks[crosslink][0]["Crosslinker"],
+                             "Crosslink Type": crosslinks[crosslink][0]["Crosslink Type"],
+                             "# CSMs": len(crosslinks[crosslink]),
+                             "# Proteins": MSAnnika_CSM_Grouper.get_nr_proteins(crosslinks[crosslink][0]),
+                             "Sequence A": crosslinks[crosslink][0]["Sequence A"],
+                             "Accession A": crosslinks[crosslink][0]["Accession A"],
+                             "Position A": crosslinks[crosslink][0]["Crosslinker Position A"],
+                             "Sequence B": crosslinks[crosslink][0]["Sequence B"],
+                             "Accession B": crosslinks[crosslink][0]["Accession B"],
+                             "Position B": crosslinks[crosslink][0]["Crosslinker Position B"],
+                             "Protein Descriptions A": crosslinks[crosslink][0]["Accession A"],
+                             "Protein Descriptions B": crosslinks[crosslink][0]["Accession B"],
+                             "Best CSM Score": MSAnnika_CSM_Grouper.get_best_csm_score(crosslinks[crosslink]),
+                             "In protein A": crosslinks[crosslink][0]["A in protein"],
+                             "In protein B": crosslinks[crosslink][0]["B in protein"],
+                             "Decoy": MSAnnika_CSM_Grouper.get_decoy_flag(crosslinks[crosslink][0]),
+                             "Modifications A": crosslinks[crosslink][0]["Modifications A"],
+                             "Modifications B": crosslinks[crosslink][0]["Modifications B"],
+                             "Confidence": "Low"})
+            rows.append(row)
+
+        return pd.concat(rows, ignore_index = True, axis = 1, names = columns).T
+
+class MSAnnika_CSM_Validator:
+
+    @staticmethod
+    def get_class(row: pd.Series) -> str:
+        return "Decoy" if "D" in row["Alpha T/D"] or "D" in row["Beta T/D"] else "Target"
+
+    @staticmethod
+    def get_fdr(data: pd.DataFrame, score: float) -> float:
+
+        df = data[data["Combined Score"] > score]
+        df["Class"] = filtered_df.apply(lambda row: MSAnnika_CSM_Validator.get_class(row), axis = 1)
+
+        return df[df["Class"] == "Decoy"].shape[0] / df[df["Class"] == "Target"].shape[0]
+
+    @staticmethod
+    def get_cutoff(data: pd.DataFrame, fdr: float) -> float:
+
+        scores = sorted(data["Combined Score"].tolist())
+        for score in scores:
+            if MSAnnika_CSM_Validator.get_fdr(data, score) < fdr:
+                return score
+
+        return scores[0]
+
+    @staticmethod
+    def validate(data: pd.DataFrame, fdr: float) -> pd.DataFrame:
+
+        cutoff = MSAnnika_CSM_Validator.get_cutoff(data, fdr)
+        df = data[data["Combined Score"] > cutoff]
+
+        if "Confidence" not in df.columns:
+            return df
+
+        df["Confidence"] = "High"
+
+        return df
+
+class MSAnnika_Crosslink_Validator:
+
+    @staticmethod
+    def get_class(row: pd.Series) -> str:
+        return "Decoy" if row["Decoy"] else "Target"
+
+    @staticmethod
+    def get_fdr(data: pd.DataFrame, score: float) -> float:
+
+        df = data[data["Best CSM Score"] > score]
+        df["Class"] = filtered_df.apply(lambda row: MSAnnika_Crosslink_Validator.get_class(row), axis = 1)
+
+        return df[df["Class"] == "Decoy"].shape[0] / df[df["Class"] == "Target"].shape[0]
+
+    @staticmethod
+    def get_cutoff(data: pd.DataFrame, fdr: float) -> float:
+
+        scores = sorted(data["Best CSM Score"].tolist())
+        for score in scores:
+            if MSAnnika_Crosslink_Validator.get_fdr(data, score) < fdr:
+                return score
+
+        return scores[0]
+
+    @staticmethod
+    def validate(data: pd.DataFrame, fdr: float) -> pd.DataFrame:
+
+        cutoff = MSAnnika_Crosslink_Validator.get_cutoff(data, fdr)
+        df = data[data["Best CSM Score"] > cutoff]
+        df["Confidence"] = "High"
+
+        return df
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(metavar = "f",
+                        dest = "files",
+                        help = "Name/Path of the MS Annika result files to process.",
+                        type = str,
+                        nargs = "+")
+    parser.add_argument("-fdr", "--false_discovery_rate",
+                        dest = "fdr",
+                        default = None,
+                        help = "FDR for CSM/crosslink validation.",
+                        type = float)
+    parser.add_argument("--version",
+                        action = "version",
+                        version = __version)
+    args = parser.parse_args()
+
+    for f, file in enumerate(args.files):
+        df = pd.read_excel(file)
+
+        if "Combined Score" in df.columns:
+            crosslinks = MSAnnika_CSM_Grouper.group(df)
+            crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks.xlsx", sheet_name = "Crosslinks", index = False)
+            if args.fdr is not None:
+                validated_csms = MSAnnika_CSM_Validator.validate(df, args.fdr)
+                validated_csms.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "CSMs", index = False)
+                validated_crosslinks = MSAnnika_Crosslink_Validator.validate(crosslinks, args.fdr)
+                validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks_validated.xlsx", sheet_name = "Crosslinks", index = False)
+        else:
+            if args.fdr is not None:
+                validated_crosslinks = MSAnnika_Crosslink_Validator.validate(df, args.fdr)
+                validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "Crosslinks", index = False)
+            else:
+                print("Crosslink file without FDR given. Nothing to do.")
+
+        print(f"Processed {f + 1} files...")
+
+    print("Done!")
+
+if __name__ == "__main__":
+    main()
