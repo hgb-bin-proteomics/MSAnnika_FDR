@@ -31,7 +31,7 @@ class MSAnnika_CSM_Grouper:
 
     @staticmethod
     def get_nr_proteins(row: pd.Series) -> int:
-        proteins_str = row["Accession A"].strip(";") + ";" + row["Accession B"].strip(";")
+        proteins_str = str(row["Accession A"]).strip(";") + ";" + str(row["Accession B"]).strip(";")
         return len(proteins_str.split(";"))
 
     @staticmethod
