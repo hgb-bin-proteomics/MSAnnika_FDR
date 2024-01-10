@@ -141,7 +141,7 @@ class MSAnnika_CSM_Validator:
         if "Confidence" not in df.columns:
             return df
 
-        df["Confidence"] = "High"
+        df["Confidence"] = df.apply(lambda row: "High", axis = 1)
 
         return df
 
@@ -174,7 +174,7 @@ class MSAnnika_Crosslink_Validator:
 
         cutoff = MSAnnika_Crosslink_Validator.get_cutoff(data, fdr)
         df = data[data["Best CSM Score"] > cutoff]
-        df["Confidence"] = "High"
+        df["Confidence"] = df.apply(lambda row: "High", axis = 1)
 
         return df
 
