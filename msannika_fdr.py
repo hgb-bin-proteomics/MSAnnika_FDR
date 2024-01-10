@@ -176,7 +176,7 @@ class MSAnnika_Crosslink_Validator:
 
         return df
 
-def main() -> None:
+def main(argv = None) -> List[pd.DataFrame]:
     parser = argparse.ArgumentParser()
     parser.add_argument(metavar = "f",
                         dest = "files",
@@ -191,7 +191,9 @@ def main() -> None:
     parser.add_argument("--version",
                         action = "version",
                         version = __version)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
+    result_list = list()
 
     for f, file in enumerate(args.files):
         df = pd.read_excel(file)
@@ -199,21 +201,26 @@ def main() -> None:
         if "Combined Score" in df.columns:
             crosslinks = MSAnnika_CSM_Grouper.group(df)
             crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks.xlsx", sheet_name = "Crosslinks", index = False)
+            result_list.append(crosslinks)
             if args.fdr is not None:
                 validated_csms = MSAnnika_CSM_Validator.validate(df, args.fdr)
                 validated_csms.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "CSMs", index = False)
+                result_list.append(validated_csms)
                 validated_crosslinks = MSAnnika_Crosslink_Validator.validate(crosslinks, args.fdr)
                 validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks_validated.xlsx", sheet_name = "Crosslinks", index = False)
+                result_list.append(validated_crosslinks)
         else:
             if args.fdr is not None:
                 validated_crosslinks = MSAnnika_Crosslink_Validator.validate(df, args.fdr)
                 validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "Crosslinks", index = False)
+                result_list.append(validated_crosslinks)
             else:
-                print("Crosslink file without FDR given. Nothing to do.")
+                print(f"Crosslink file without FDR given. Nothing to do. Skipping file {file}.")
 
         print(f"Processed {f + 1} files...")
 
     print("Done!")
+    return result_list
 
 if __name__ == "__main__":
-    main()
+    r = main()
