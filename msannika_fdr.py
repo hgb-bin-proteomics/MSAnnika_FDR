@@ -205,15 +205,15 @@ def main(argv = None) -> List[pd.DataFrame]:
             crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks.xlsx", sheet_name = "Crosslinks", index = False)
             result_list.append(crosslinks)
             if args.fdr is not None:
-                validated_csms = MSAnnika_CSM_Validator.validate(df, args.fdr)
+                validated_csms = MSAnnika_CSM_Validator.validate(df, args.fdr if args.fdr < 1.0 else args.fdr / 100)
                 validated_csms.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "CSMs", index = False)
                 result_list.append(validated_csms)
-                validated_crosslinks = MSAnnika_Crosslink_Validator.validate(crosslinks, args.fdr)
+                validated_crosslinks = MSAnnika_Crosslink_Validator.validate(crosslinks, args.fdr if args.fdr < 1.0 else args.fdr / 100)
                 validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks_validated.xlsx", sheet_name = "Crosslinks", index = False)
                 result_list.append(validated_crosslinks)
         else:
             if args.fdr is not None:
-                validated_crosslinks = MSAnnika_Crosslink_Validator.validate(df, args.fdr)
+                validated_crosslinks = MSAnnika_Crosslink_Validator.validate(df, args.fdr if args.fdr < 1.0 else args.fdr / 100)
                 validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "Crosslinks", index = False)
                 result_list.append(validated_crosslinks)
             else:
