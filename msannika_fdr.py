@@ -55,7 +55,7 @@ class MSAnnika_CSM_Grouper:
         crosslinks = dict()
 
         for i, row in data.iterrows():
-            crosslink = get_crosslink_key(row)
+            crosslink = MSAnnika_CSM_Grouper.get_crosslink_key(row)
             if crosslink in crosslinks:
                 crosslinks[crosslink].append(row)
             else:
@@ -118,7 +118,7 @@ class MSAnnika_CSM_Validator:
     def get_fdr(data: pd.DataFrame, score: float) -> float:
 
         df = data[data["Combined Score"] > score]
-        df["Class"] = filtered_df.apply(lambda row: MSAnnika_CSM_Validator.get_class(row), axis = 1)
+        df["Class"] = df.apply(lambda row: MSAnnika_CSM_Validator.get_class(row), axis = 1)
 
         return df[df["Class"] == "Decoy"].shape[0] / df[df["Class"] == "Target"].shape[0]
 
@@ -155,7 +155,7 @@ class MSAnnika_Crosslink_Validator:
     def get_fdr(data: pd.DataFrame, score: float) -> float:
 
         df = data[data["Best CSM Score"] > score]
-        df["Class"] = filtered_df.apply(lambda row: MSAnnika_Crosslink_Validator.get_class(row), axis = 1)
+        df["Class"] = df.apply(lambda row: MSAnnika_Crosslink_Validator.get_class(row), axis = 1)
 
         return df[df["Class"] == "Decoy"].shape[0] / df[df["Class"] == "Target"].shape[0]
 
