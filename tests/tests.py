@@ -10,7 +10,7 @@ def test1_msannika_fdr():
 
     from msannika_fdr import main
 
-    result = main(["DSSO_CSMs.xlsx"])
+    result = main(["DSSO_Crosslinks.xlsx"])
 
     assert len(result) == 0
 
@@ -19,7 +19,7 @@ def test2_msannika_fdr():
 
     from msannika_fdr import main
 
-    result = main(["DSSO_CSMs.xlsx", "-fdr", "0.01"])
+    result = main(["DSSO_Crosslinks.xlsx", "-fdr", "0.01"])
 
     # check nr of results
     assert len(result) == 1
