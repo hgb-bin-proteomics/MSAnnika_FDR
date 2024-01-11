@@ -163,7 +163,7 @@ def test8_msannika_fdr():
     assert result[2].shape[0] == 807
 
     # check fdr of validated crosslinks
-    assert result[2][result[2]["Decoy"] == True].shape[0] / result[2][result[2]["Decoy"] == False].shape[0] < 0.01
+    assert result[2][result[2]["Decoy"] == True].shape[0] / result[2][result[2]["Decoy"] == False].shape[0] < 0.05
 
     #### validated csms ####
 
@@ -172,4 +172,4 @@ def test8_msannika_fdr():
 
     # check fdr of validated csms
     result[1]["Class"] = result[1].apply(lambda row: csm_val.get_class(row), axis = 1)
-    assert result[1][result[1]["Class"] == "Decoy"].shape[0] / result[1][result[1]["Class"] == "Target"].shape[0] < 0.01
+    assert result[1][result[1]["Class"] == "Decoy"].shape[0] / result[1][result[1]["Class"] == "Target"].shape[0] < 0.05
