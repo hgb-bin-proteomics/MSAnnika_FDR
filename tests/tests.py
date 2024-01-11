@@ -78,7 +78,6 @@ def test5_msannika_fdr():
 # csms file with fdr should validate
 def test6_msannika_fdr():
 
-    import pandas as pd
     from msannika_fdr import main
     from msannika_fdr import MSAnnika_CSM_Validator as csm_val
 
@@ -106,13 +105,12 @@ def test6_msannika_fdr():
     assert result[1].shape[0] == 3021
 
     # check fdr of validated csms
-    results[1]["Class"] = pd.apply(lambda row: csm_val.get_class(row), axis = 1)
+    result[1]["Class"] = result[1].apply(lambda row: csm_val.get_class(row), axis = 1)
     assert result[1][result[1]["Class"] == "Decoy"].shape[0] / result[1][result[1]["Class"] == "Target"].shape[0] < 0.01
 
 # csms file with fdr should validate
 def test7_msannika_fdr():
 
-    import pandas as pd
     from msannika_fdr import main
     from msannika_fdr import MSAnnika_CSM_Validator as csm_val
 
@@ -140,13 +138,12 @@ def test7_msannika_fdr():
     assert result[1].shape[0] == 3021
 
     # check fdr of validated csms
-    results[1]["Class"] = pd.apply(lambda row: csm_val.get_class(row), axis = 1)
+    result[1]["Class"] = result[1].apply(lambda row: csm_val.get_class(row), axis = 1)
     assert result[1][result[1]["Class"] == "Decoy"].shape[0] / result[1][result[1]["Class"] == "Target"].shape[0] < 0.01
 
 # csms file with fdr should validate
 def test8_msannika_fdr():
 
-    import pandas as pd
     from msannika_fdr import main
     from msannika_fdr import MSAnnika_CSM_Validator as csm_val
 
@@ -174,5 +171,5 @@ def test8_msannika_fdr():
     assert result[1].shape[0] == 3331
 
     # check fdr of validated csms
-    results[1]["Class"] = pd.apply(lambda row: csm_val.get_class(row), axis = 1)
+    result[1]["Class"] = result[1].apply(lambda row: csm_val.get_class(row), axis = 1)
     assert result[1][result[1]["Class"] == "Decoy"].shape[0] / result[1][result[1]["Class"] == "Target"].shape[0] < 0.01
