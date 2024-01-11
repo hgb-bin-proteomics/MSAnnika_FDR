@@ -15,7 +15,31 @@ __date = "2024-01-09"
 
 ######################
 
-# import packages
+"""
+DESCRIPTION:
+A script to group and validate results from MS Annika searches.
+USAGE:
+msannika_fdr.py f [f ...]
+                  [-fdr FDR][--false_discovery_rate FDR]
+                  [-h][--help]
+                  [--version]
+positional arguments:
+  f                     MS Annika result files in Microsoft Excel format (.xlsx)
+                        to process.
+optional arguments:
+  -fdr FDR, --false_discovery_rate FDR
+                        False discovery rate to validate results for. Supports
+                        both percentage input (e.g. 1) or fraction input (e.g.
+                        0.01). By default not set and the input results will
+                        just be grouped to crosslinks (if CSMs as input) or
+                        nothing will be done (if crosslinks as input).
+                        Default: None
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+"""
+
+######################
+
 import argparse
 import pandas as pd
 
