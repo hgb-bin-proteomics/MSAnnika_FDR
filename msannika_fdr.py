@@ -103,7 +103,7 @@ class MSAnnika_CSM_Grouper:
                              "Decoy": MSAnnika_CSM_Grouper.get_decoy_flag(crosslinks[crosslink][0]),
                              "Modifications A": crosslinks[crosslink][0]["Modifications A"],
                              "Modifications B": crosslinks[crosslink][0]["Modifications B"],
-                             "Confidence": "Low"})
+                             "Confidence": "Unknown"})
             rows.append(row)
 
         return pd.concat(rows, ignore_index = True, axis = 1, names = columns).T
