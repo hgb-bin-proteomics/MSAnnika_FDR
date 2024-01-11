@@ -205,19 +205,19 @@ def main(argv = None) -> List[pd.DataFrame]:
 
         if "Combined Score" in df.columns:
             crosslinks = MSAnnika_CSM_Grouper.group(df)
-            crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks.xlsx", sheet_name = "Crosslinks", index = False)
+            crosslinks.to_excel(".xlsx".join(file.split(".xlsx")[:-1]) + "_crosslinks.xlsx", sheet_name = "Crosslinks", index = False)
             result_list.append(crosslinks)
             if args.fdr is not None:
                 validated_csms = MSAnnika_CSM_Validator.validate(df, float(args.fdr) if float(args.fdr) < 1.0 else float(args.fdr) / 100.0)
-                validated_csms.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "CSMs", index = False)
+                validated_csms.to_excel(".xlsx".join(file.split(".xlsx")[:-1]) + "_validated.xlsx", sheet_name = "CSMs", index = False)
                 result_list.append(validated_csms)
                 validated_crosslinks = MSAnnika_Crosslink_Validator.validate(crosslinks, float(args.fdr) if float(args.fdr) < 1.0 else float(args.fdr) / 100.0)
-                validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_crosslinks_validated.xlsx", sheet_name = "Crosslinks", index = False)
+                validated_crosslinks.to_excel(".xlsx".join(file.split(".xlsx")[:-1]) + "_crosslinks_validated.xlsx", sheet_name = "Crosslinks", index = False)
                 result_list.append(validated_crosslinks)
         else:
             if args.fdr is not None:
                 validated_crosslinks = MSAnnika_Crosslink_Validator.validate(df, args.fdr if args.fdr < 1.0 else args.fdr / 100)
-                validated_crosslinks.to_excel(file.rstrip(".xlsx") + "_validated.xlsx", sheet_name = "Crosslinks", index = False)
+                validated_crosslinks.to_excel(".xlsx".join(file.split(".xlsx")[:-1]) + "_validated.xlsx", sheet_name = "Crosslinks", index = False)
                 result_list.append(validated_crosslinks)
             else:
                 print(f"Crosslink file without FDR given. Nothing to do. Skipping file {file}.")
