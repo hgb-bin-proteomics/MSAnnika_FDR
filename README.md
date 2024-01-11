@@ -54,7 +54,7 @@ python msannika_fdr.py DSSO_Crosslinks.xlsx -fdr 0.01
 This will validate the input crosslinks for estimated 1% FDR and will generate a
 a file called `DSSO_Crosslinks_validated.xlsx` containing only crosslinks above
 the estimated 1% FDR threshold. Note that the following command will produce the
-same output:
+same output (values >= 1 will automatically divided by 100):
 
 ```bash
 python msannika_fdr.py DSSO_Crosslinks.xlsx -fdr 1
