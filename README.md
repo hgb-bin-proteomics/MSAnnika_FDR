@@ -17,7 +17,7 @@ merging results from different MS Annika runs.
 
 ## Examples
 
-`msannika_fdr.py` takes one positional and one flagged argument. The first
+`msannika_fdr.py` takes one positional and one optional argument. The first
 argument always has to be the filename(s) of the MS Annika result file(s). You
 may specify any number of result files, keep in mind however that
 `msannika_fdr.py` will process these files seperately, if you want to merge
@@ -43,8 +43,8 @@ python msannika_fdr.py DSSO_CSMs.xlsx
 This will group the CSMs by sequence and position to crosslinks and you should
 see a file `DSSO_CSMs_crosslinks.xlsx` generated.
 
-If you suppy the argument `-fdr` or `--false_discovery_rate` and the desired FDR
-as a floating point number, the results will be validated:
+If you suppy the optional argument `-fdr` or `--false_discovery_rate` and the
+desired FDR as a floating point number, the results will be validated:
 
 ```bash
 python msannika_fdr.py DSSO_Crosslinks.xlsx -fdr 0.01
@@ -110,6 +110,45 @@ optional arguments:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
 """
+```
+
+## Function Documentation
+
+If you want to integrate the MS Annika FDR calculation into your own scripts,
+you can import the following functions as given:
+
+```python
+import pandas as pd
+
+crosslinks = pd.read_excel("DSSO_Crosslinks.xlsx")
+csms = pd.read_excel("DSSO_CSMs.xlsx")
+
+# Grouping CSMs to crosslinks
+from msannika_fdr import MSAnnika_CSM_Grouper
+Crosslinks_grouped_from_CSMs = MSAnnika_CSM_Grouper.group(csms)
+
+# The function signature of MSAnnika_CSM_Grouper.group is:
+def group(data: pd.DataFrame) -> pd.DataFrame:
+    """code omitted"""
+    return
+
+# Validating CSMs for 0.01 FDR
+from msannika_fdr import MSAnnika_CSM_Validator
+Validated_CSMs = MSAnnika_CSM_Validator.validate(csms, 0.01)
+
+# The function signature of MSAnnika_CSM_Validator.validate is:
+def validate(data: pd.DataFrame, fdr: float) -> pd.DataFrame:
+    """code omitted"""
+    return
+
+# Validating Crosslinks for 0.01 FDR
+from msannika_fdr import MSAnnika_Crosslink_Validator
+Validated_Crosslinks = MSAnnika_Crosslink_Validator.validate(crosslinks, 0.01)
+
+# The function signature of MSAnnika_Crosslink_Validator.validate is:
+def validate(data: pd.DataFrame, fdr: float) -> pd.DataFrame:
+    """code omitted"""
+    return
 ```
 
 ## Known Issues
