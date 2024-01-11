@@ -22,9 +22,10 @@ argument always has to be the filename(s) of the MS Annika result file(s). You
 may specify any number of result files, keep in mind however that
 `msannika_fdr.py` will process these files seperately, if you want to merge
 several result files, check out [MS Annika Combine Results](https://github.com/hgb-bin-proteomics/MSAnnika_Combine_Results).
-For demonstration purposes we will use the files supplied in the `/data` folder.
-`DSSO_Crosslinks.xlsx` contains unvalidated crosslinks from an MS Annika search,
-`DSSO_CSMs.xlsx` contains unvalidated CSMs from an MS Annika search.
+For demonstration purposes we will use the files supplied in the `/data` folder:
+- `DSSO_Crosslinks.xlsx` contains unvalidated crosslinks from an MS Annika
+search.
+- `DSSO_CSMs.xlsx` contains unvalidated CSMs from an MS Annika search.
 
 The following is a valid `msannika_fdr.py` call:
 
