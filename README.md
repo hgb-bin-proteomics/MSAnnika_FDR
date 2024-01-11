@@ -69,9 +69,9 @@ python msannika_fdr.py DSSO_CSMs.xlsx -fdr 0.01
 This will will validate the input CSMs for estimated 1% FDR and will generate a
 a file `DSSO_CSMs_validated.xlsx` containing only CSMs above the estimated 1%
 FDR threshold. Furthermore, it will group the input CSMs to crosslinks and
-output them to the file `DSSO_CSMs_crosslinks.xlsx` and the validate those
+output them to the file `DSSO_CSMs_crosslinks.xlsx` and then validate those
 crosslinks for 1% estimated FDR and store the result in
-`DSSO_CSMs_crosslinks_validated.xlsx`
+`DSSO_CSMs_crosslinks_validated.xlsx`.
 
 You can also supply several files to the script like this:
 
@@ -80,7 +80,7 @@ python msannika_fdr.py DSSO_CSMs.xlsx DSSO_Crosslinks.xlsx -fdr 0.01
 ```
 
 This will process the input files seperately and sequentially and produce the
-as mentioned above:
+files as mentioned above:
 - `DSSO_Crosslinks_validated.xlsx`
 - `DSSO_CSMs_validated.xlsx`
 - `DSSO_CSMs_crosslinks.xlsx`
