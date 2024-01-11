@@ -28,4 +28,4 @@ def test2_msannika_fdr():
     assert result[0].shape[0] == 714
 
     # check fdr
-    assert result[0][result[0]["Decoy"] == False].shape[0] / result[0][result[0]["Decoy"] == True].shape[0] < 0.01
+    assert result[0][result[0]["Decoy"] == True].shape[0] / result[0][result[0]["Decoy"] == False].shape[0] < 0.01
