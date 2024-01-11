@@ -29,3 +29,48 @@ def test2_msannika_fdr():
 
     # check fdr
     assert result[0][result[0]["Decoy"] == True].shape[0] / result[0][result[0]["Decoy"] == False].shape[0] < 0.01
+
+# crosslink file with fdr should validate
+def test3_msannika_fdr():
+
+    from msannika_fdr import main
+
+    result = main(["DSSO_Crosslinks.xlsx", "-fdr", "1"])
+
+    # check nr of results
+    assert len(result) == 1
+
+    # check nr of crosslinks
+    assert result[0].shape[0] == 714
+
+    # check fdr
+    assert result[0][result[0]["Decoy"] == True].shape[0] / result[0][result[0]["Decoy"] == False].shape[0] < 0.01
+
+# crosslink file with fdr should validate
+def test4_msannika_fdr():
+
+    from msannika_fdr import main
+
+    result = main(["DSSO_Crosslinks.xlsx", "-fdr", "0.05"])
+
+    # check nr of results
+    assert len(result) == 1
+
+    # check nr of crosslinks
+    assert result[0].shape[0] == 807
+
+    # check fdr
+    assert result[0][result[0]["Decoy"] == True].shape[0] / result[0][result[0]["Decoy"] == False].shape[0] < 0.05
+
+# csms file without fdr should group
+def test5_msannika_fdr():
+
+    from msannika_fdr import main
+
+    result = main(["DSSO_CSMs.xlsx"])
+
+    # check nr of results
+    assert len(result) == 1
+
+    # check nr of grouped crosslinks
+    assert result[0].shape[0] == 3192
