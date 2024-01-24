@@ -6,10 +6,11 @@
 # micha.birklbauer@gmail.com
 
 # version tracking
-__version = "1.0.0"
-__date = "2024-01-09"
+__version = "1.1.0"
+__date = "2024-01-24"
 
 # REQUIREMENTS
+# pip install numpy
 # pip install pandas
 # pip install openpyxl
 
@@ -41,6 +42,7 @@ optional arguments:
 ######################
 
 import argparse
+import numpy as np
 import pandas as pd
 
 from typing import List
@@ -139,19 +141,15 @@ class MSAnnika_CSM_Validator:
         return "Decoy" if "D" in row["Alpha T/D"] or "D" in row["Beta T/D"] else "Target"
 
     @staticmethod
-    def get_fdr(data: pd.DataFrame, score: float) -> float:
-
-        df = data[data["Combined Score"] > score].copy()
-        df["Class"] = df.apply(lambda row: MSAnnika_CSM_Validator.get_class(row), axis = 1)
-
-        return df[df["Class"] == "Decoy"].shape[0] / df[df["Class"] == "Target"].shape[0]
-
-    @staticmethod
     def get_cutoff(data: pd.DataFrame, fdr: float) -> float:
 
-        scores = sorted(data["Combined Score"].tolist())
-        for score in scores:
-            if MSAnnika_CSM_Validator.get_fdr(data, score) < fdr:
+        data["Class"] = data.apply(lambda row: MSAnnika_CSM_Validator.get_class(row), axis = 1)
+        data["Class_label"] = data.apply(lambda row: 0 if row["Class"] == "Target" else 1, axis = 1)
+        labels = data["Class_label"].to_numpy()
+        labels_sorted = labels[data["Combined Score"].to_numpy().argsort()]
+
+        for i, score in enumerate(sorted(data["Combined Score"].tolist())):
+            if labels_sorted[i:].sum() / (labels_sorted[i:].shape[0] - labels_sorted[i:].sum()) < fdr:
                 return score
 
         return scores[0]
@@ -176,19 +174,15 @@ class MSAnnika_Crosslink_Validator:
         return "Decoy" if row["Decoy"] else "Target"
 
     @staticmethod
-    def get_fdr(data: pd.DataFrame, score: float) -> float:
-
-        df = data[data["Best CSM Score"] > score].copy()
-        df["Class"] = df.apply(lambda row: MSAnnika_Crosslink_Validator.get_class(row), axis = 1)
-
-        return df[df["Class"] == "Decoy"].shape[0] / df[df["Class"] == "Target"].shape[0]
-
-    @staticmethod
     def get_cutoff(data: pd.DataFrame, fdr: float) -> float:
 
-        scores = sorted(data["Best CSM Score"].tolist())
-        for score in scores:
-            if MSAnnika_Crosslink_Validator.get_fdr(data, score) < fdr:
+        data["Class"] = data.apply(lambda row: MSAnnika_CSM_Validator.get_class(row), axis = 1)
+        data["Class_label"] = data.apply(lambda row: 0 if row["Class"] == "Target" else 1, axis = 1)
+        labels = data["Class_label"].to_numpy()
+        labels_sorted = labels[data["Best CSM Score"].to_numpy().argsort()]
+
+        for i, score in enumerate(sorted(data["Best CSM Score"].tolist())):
+            if labels_sorted[i:].sum() / (labels_sorted[i:].shape[0] - labels_sorted[i:].sum()) < fdr:
                 return score
 
         return scores[0]
