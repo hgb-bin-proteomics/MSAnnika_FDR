@@ -177,7 +177,7 @@ class MSAnnika_Crosslink_Validator:
     @staticmethod
     def get_cutoff(data: pd.DataFrame, fdr: float) -> float:
 
-        data["Class"] = data.apply(lambda row: MSAnnika_CSM_Validator.get_class(row), axis = 1)
+        data["Class"] = data.apply(lambda row: MSAnnika_Crosslink_Validator.get_class(row), axis = 1)
         data["Class_label"] = data.apply(lambda row: 0 if row["Class"] == "Target" else 1, axis = 1)
         labels = data["Class_label"].to_numpy()
         labels_sorted = labels[data["Best CSM Score"].to_numpy().argsort()]
