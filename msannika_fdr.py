@@ -148,7 +148,8 @@ class MSAnnika_CSM_Validator:
         labels = data["Class_label"].to_numpy()
         labels_sorted = labels[data["Combined Score"].to_numpy().argsort()]
 
-        for i, score in enumerate(sorted(data["Combined Score"].tolist())):
+        scores = sorted(data["Combined Score"].tolist())
+        for i, score in enumerate(scores):
             if labels_sorted[i:].sum() / (labels_sorted[i:].shape[0] - labels_sorted[i:].sum()) < fdr:
                 return score
 
@@ -181,7 +182,8 @@ class MSAnnika_Crosslink_Validator:
         labels = data["Class_label"].to_numpy()
         labels_sorted = labels[data["Best CSM Score"].to_numpy().argsort()]
 
-        for i, score in enumerate(sorted(data["Best CSM Score"].tolist())):
+        scores = sorted(data["Best CSM Score"].tolist())
+        for i, score in enumerate(scores):
             if labels_sorted[i:].sum() / (labels_sorted[i:].shape[0] - labels_sorted[i:].sum()) < fdr:
                 return score
 
