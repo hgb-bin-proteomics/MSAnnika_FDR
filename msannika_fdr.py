@@ -159,7 +159,7 @@ class MSAnnika_CSM_Validator:
     def validate(data: pd.DataFrame, fdr: float) -> pd.DataFrame:
 
         cutoff = MSAnnika_CSM_Validator.get_cutoff(data, fdr)
-        df = data[data["Combined Score"] > cutoff].copy()
+        df = data[data["Combined Score"] >= cutoff].copy()
 
         if "Confidence" not in df.columns:
             return df
@@ -193,7 +193,7 @@ class MSAnnika_Crosslink_Validator:
     def validate(data: pd.DataFrame, fdr: float) -> pd.DataFrame:
 
         cutoff = MSAnnika_Crosslink_Validator.get_cutoff(data, fdr)
-        df = data[data["Best CSM Score"] > cutoff].copy()
+        df = data[data["Best CSM Score"] >= cutoff].copy()
         df["Confidence"] = df.apply(lambda row: "High", axis = 1)
 
         return df
