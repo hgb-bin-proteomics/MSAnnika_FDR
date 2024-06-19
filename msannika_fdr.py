@@ -6,7 +6,7 @@
 # micha.birklbauer@gmail.com
 
 # version tracking
-__version = "1.1.1"
+__version = "1.1.2"
 __date = "2024-06-19"
 
 # REQUIREMENTS
@@ -132,8 +132,8 @@ class MSAnnika_CSM_Grouper:
                              "Protein Descriptions A": crosslinks[crosslink][0]["Accession A"],
                              "Protein Descriptions B": crosslinks[crosslink][0]["Accession B"],
                              "Best CSM Score": MSAnnika_CSM_Grouper.get_best_csm_score(crosslinks[crosslink]),
-                             "In protein A": get_xl_position_in_protein(crosslinks[crosslink][0], True),
-                             "In protein B": get_xl_position_in_protein(crosslinks[crosslink][0], False),
+                             "In protein A": MSAnnika_CSM_Grouper.get_xl_position_in_protein(crosslinks[crosslink][0], True),
+                             "In protein B": MSAnnika_CSM_Grouper.get_xl_position_in_protein(crosslinks[crosslink][0], False),
                              "Decoy": MSAnnika_CSM_Grouper.get_decoy_flag(crosslinks[crosslink][0]),
                              "Modifications A": crosslinks[crosslink][0]["Modifications A"],
                              "Modifications B": crosslinks[crosslink][0]["Modifications B"],
