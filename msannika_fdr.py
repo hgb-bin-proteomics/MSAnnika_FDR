@@ -6,8 +6,8 @@
 # micha.birklbauer@gmail.com
 
 # version tracking
-__version = "1.1.0"
-__date = "2024-01-24"
+__version = "1.1.5"
+__date = "2024-06-19"
 
 # REQUIREMENTS
 # pip install numpy
@@ -59,6 +59,14 @@ class MSAnnika_CSM_Grouper:
     def get_nr_proteins(row: pd.Series) -> int:
         proteins_str = str(row["Accession A"]).strip(";") + ";" + str(row["Accession B"]).strip(";")
         return len(proteins_str.split(";"))
+
+    @staticmethod
+    def get_xl_position_in_protein(row: pd.Series, alpha: bool) -> int:
+        if alpha:
+            positions = [float(pos) + float(row["Crosslinker Position A"]) for pos in str(row["A in protein"]).split(";")]
+        else:
+            positions = [float(pos) + float(row["Crosslinker Position B"]) for pos in str(row["B in protein"]).split(";")]
+        return ";".join([str(int(pos)) for pos in positions if not pd.isna(pos)])
 
     @staticmethod
     def get_best_csm_score(csms: List[pd.Series]) -> float:
@@ -124,8 +132,8 @@ class MSAnnika_CSM_Grouper:
                              "Protein Descriptions A": crosslinks[crosslink][0]["Accession A"],
                              "Protein Descriptions B": crosslinks[crosslink][0]["Accession B"],
                              "Best CSM Score": MSAnnika_CSM_Grouper.get_best_csm_score(crosslinks[crosslink]),
-                             "In protein A": crosslinks[crosslink][0]["A in protein"],
-                             "In protein B": crosslinks[crosslink][0]["B in protein"],
+                             "In protein A": MSAnnika_CSM_Grouper.get_xl_position_in_protein(crosslinks[crosslink][0], True),
+                             "In protein B": MSAnnika_CSM_Grouper.get_xl_position_in_protein(crosslinks[crosslink][0], False),
                              "Decoy": MSAnnika_CSM_Grouper.get_decoy_flag(crosslinks[crosslink][0]),
                              "Modifications A": crosslinks[crosslink][0]["Modifications A"],
                              "Modifications B": crosslinks[crosslink][0]["Modifications B"],
