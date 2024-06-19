@@ -6,7 +6,7 @@
 # micha.birklbauer@gmail.com
 
 # version tracking
-__version = "1.1.3"
+__version = "1.1.4"
 __date = "2024-06-19"
 
 # REQUIREMENTS
@@ -63,10 +63,10 @@ class MSAnnika_CSM_Grouper:
     @staticmethod
     def get_xl_position_in_protein(row: pd.Series, alpha: bool) -> int:
         if alpha:
-            positions = [int(pos) + int(row["Crosslinker Position A"]) for pos in str(row["A in protein"]).split(";")]
+            positions = [float(pos) + float(row["Crosslinker Position A"]) for pos in str(row["A in protein"]).split(";")]
         else:
-            positions = [int(pos) + int(row["Crosslinker Position B"]) for pos in str(row["B in protein"]).split(";")]
-        return ";".join([str(pos) for pos in positions])
+            positions = [float(pos) + float(row["Crosslinker Position B"]) for pos in str(row["B in protein"]).split(";")]
+        return ";".join([str(int(pos)) for pos in positions])
 
     @staticmethod
     def get_best_csm_score(csms: List[pd.Series]) -> float:
